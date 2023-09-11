@@ -21,6 +21,8 @@ public class CatapaultShot : MonoBehaviour
 
     public float birdPositionOffset;
 
+    private RepeatBackground repeatBackground;
+
     Rigidbody2D bird;
     Collider2D birdCollider;
 
@@ -32,6 +34,7 @@ public class CatapaultShot : MonoBehaviour
         lineRenderers[1].positionCount = 2;
         lineRenderers[0].SetPosition(0, stripPositions[0].position);
         lineRenderers[1].SetPosition(0, stripPositions[1].position);
+        repeatBackground = GameObject.FindObjectOfType<RepeatBackground>();
 
         CreateBird();
     }
@@ -87,14 +90,22 @@ public class CatapaultShot : MonoBehaviour
     void Shoot()
     {
         bird.isKinematic = false;
+        repeatBackground.canMove = true;
         Vector3 birdForce = (currentPosition - center.position) * force * -1;
         bird.velocity = birdForce;
-
+        GameObject.FindObjectOfType<RepeatBackground>().speed = birdForce.x;
         //bird.GetComponent<Ball>().Release();
-
         bird = null;
         birdCollider = null;
-        Invoke("CreateBird", 2);
+        StartCoroutine(CameraFollowDelay());
+        
+        //Invoke("CreateBird", 2);
+    }
+
+    private IEnumerator CameraFollowDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
+        GameObject.FindObjectOfType<cameraFollwBall>().ballTrigger = true;
     }
 
     void ResetStrips()

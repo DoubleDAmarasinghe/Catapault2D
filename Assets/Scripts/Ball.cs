@@ -8,7 +8,8 @@ public class Ball : MonoBehaviour
     [SerializeField] private PhysicsMaterial2D lowBouncePM2D;
     [SerializeField] private Sprite manSprite;
     [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private  float jumpForce = 5.0f;
+    private bool doOnce = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,15 +21,19 @@ public class Ball : MonoBehaviour
     {
         if(hitCount == 3)
         {
-            Quaternion newRotation = Quaternion.Euler(0f, 0f, 0f);
-            gameObject.GetComponent<CircleCollider2D>().sharedMaterial = lowBouncePM2D;
-            gameObject.GetComponent<SpriteRenderer>().sprite = manSprite;
-            gameObject.transform.rotation = newRotation;
-            if (Input.anyKey)
+            if (doOnce)
             {
-                rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+                Quaternion newRotation = Quaternion.Euler(0f, 0f, 0f);
+                gameObject.GetComponent<CircleCollider2D>().sharedMaterial = lowBouncePM2D;
+                gameObject.GetComponent<SpriteRenderer>().sprite = manSprite;
+                gameObject.transform.rotation = newRotation;
+                gameObject.GetComponent<Animator>().SetTrigger("CanRun");
+                gameObject.GetComponent<CircleCollider2D>().radius = 2.3f;
                 GameObject.FindAnyObjectByType<cameraFollwBall>().ballTrigger = false;
+                doOnce = false;
             }
+            
+            
             
         }
     }
